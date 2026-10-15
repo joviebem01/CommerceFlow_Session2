@@ -1,0 +1,4 @@
+pguser:postgres
+pgpassword:061201
+dbname: server
+servername: PostgreSQL 18

@@ -1,0 +1,88 @@
+
+digraph EntityModel {
+  rankdir=TB;
+  bgcolor="white";
+  splines=polyline;
+  nodesep=0.95;
+  ranksep=1.05;
+  fontname="Helvetica";
+  labelloc="t";
+  fontsize=18;
+  label=<<b>CommerceFlow — Session 1 Entity Model</b><br/>
+         <font point-size="11">B2C e-commerce revenue intelligence dataset</font><br/>>;
+
+  node [shape=plaintext fontname="Helvetica"];
+  edge [color="#2E74B5" fontname="Helvetica" fontsize=10 penwidth=1.6 arrowhead=none];
+
+  Product [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#D9EAF7"><b>Product</b><br/><font point-size="9">Entity · 500 rows</font></td></tr>
+      <tr><td align="left"><b>product_id : String «PK»</b></td></tr>
+      <tr><td align="left">product_name : String</td></tr>
+      <tr><td align="left">category : String</td></tr>
+      <tr><td align="left">price : Decimal</td></tr>
+    </table>
+  >];
+
+  Customer [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#D9EAF7"><b>Customer</b><br/><font point-size="9">Entity · 50,000 raw rows · 48,200 unique IDs</font></td></tr>
+      <tr><td align="left"><b>customer_id : UUID «natural key»</b></td></tr>
+      <tr><td align="left">signup_date : Date</td></tr>
+      <tr><td align="left" bgcolor="#FFF2CC">state : String <b>«partitionKey»</b></td></tr>
+      <tr><td align="left">source : String</td></tr>
+    </table>
+  >];
+
+  Order [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#D9EAF7"><b>Order</b><br/><font point-size="9">Event · 300,000 rows</font></td></tr>
+      <tr><td align="left"><b>order_id : UUID «PK»</b></td></tr>
+      <tr><td align="left">customer_id : UUID «FK»</td></tr>
+      <tr><td align="left">product_id : String «FK»</td></tr>
+      <tr><td align="left">order_amount : Decimal</td></tr>
+      <tr><td align="left">order_date : Date «eventTime»</td></tr>
+      <tr><td align="left">status : String</td></tr>
+    </table>
+  >];
+
+  Clickstream [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#D9EAF7"><b>ClickstreamEvent</b><br/><font point-size="9">Event · 500,000 rows</font></td></tr>
+      <tr><td align="left"><b>event_id : UUID «PK»</b></td></tr>
+      <tr><td align="left">customer_id : UUID «optional FK»</td></tr>
+      <tr><td align="left">session_id : UUID</td></tr>
+      <tr><td align="left">event_type : String</td></tr>
+      <tr><td align="left">timestamp : Timestamp</td></tr>
+    </table>
+  >];
+
+  Support [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#D9EAF7"><b>SupportTicket</b><br/><font point-size="9">Event · 30,000 rows</font></td></tr>
+      <tr><td align="left"><b>ticket_id : UUID «PK»</b></td></tr>
+      <tr><td align="left">customer_id : UUID «FK»</td></tr>
+      <tr><td align="left">issue_type : String</td></tr>
+      <tr><td align="left">resolution_time_hours : Double</td></tr>
+      <tr><td align="left">sentiment : String</td></tr>
+    </table>
+  >];
+
+  Product -> Order [taillabel="1" headlabel="0..*" label="appears in" labeldistance=2.1];
+  Customer -> Order [taillabel="1" headlabel="0..*" label="places" color="#C55A11" penwidth=2.4 labeldistance=2.1];
+  Customer -> Clickstream [taillabel="0..1" headlabel="0..*" label="generates (anonymous allowed)" style=dashed labeldistance=2.1];
+  Customer -> Support [taillabel="1" headlabel="0..*" label="opens" labeldistance=2.1];
+
+  note [shape=note style=filled fillcolor="#FFF9E6" color="#C55A11" fontsize=10 label=<
+    <b>Partition key: state</b><br align="left"/>
+    50 distinct values<br align="left"/>
+    5,547 / 5,981 / 6,348 orders per state<br align="left"/>
+    skew ratio 1.14 : 1<br align="left"/><br align="left"/>
+    <b>Monetization:</b> normalized successful,<br align="left"/>
+    positive-value orders produce revenue_amount.<br align="left"/>
+    CRM contains 1,800 duplicate rows and is canonicalized first.
+  >];
+
+  note -> Customer [style=invis];
+  { rank=same; note; Customer; Product; }
+}

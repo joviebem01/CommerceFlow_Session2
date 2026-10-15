@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "regions": 50,
+  "records": 300000,
+  "count_diff": 0,
+  "mean_diff": 4.001776687800884e-11,
+  "tolerance": 1e-06,
+  "lag": 0
+}

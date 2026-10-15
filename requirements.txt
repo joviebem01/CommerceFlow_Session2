@@ -1,0 +1,5 @@
+# PostgreSQL event log and consumer state.
+psycopg2-binary>=2.9.9
+
+# Optional: export the PostgreSQL-backed events to a Kafka broker.
+kafka-python>=2.0.2

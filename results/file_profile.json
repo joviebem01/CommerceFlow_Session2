@@ -1,0 +1,331 @@
+{
+  "profiles": {
+    "clickstream": {
+      "file": "clickstream_500k_events.csv",
+      "role": "Event",
+      "rows": 500000,
+      "columns": 8,
+      "column_names": [
+        "event_id",
+        "session_id",
+        "customer_id",
+        "event_type",
+        "page_url",
+        "device_id",
+        "timestamp",
+        "ingest_run_id"
+      ],
+      "size_mb": 121.83,
+      "declared_primary_key": "event_id",
+      "candidate_primary_keys": [
+        "event_id"
+      ],
+      "duplicate_primary_key_rows": 0,
+      "constant_columns": [
+        "ingest_run_id"
+      ],
+      "null_counts": {
+        "event_id": 0,
+        "session_id": 0,
+        "customer_id": 150553,
+        "event_type": 0,
+        "page_url": 8305,
+        "device_id": 0,
+        "timestamp": 20160,
+        "ingest_run_id": 0
+      },
+      "distinct_counts": {
+        "event_id": 500000,
+        "session_id": 8000,
+        "customer_id": 48159,
+        "event_type": 4,
+        "page_url": 3020,
+        "device_id": 498949,
+        "timestamp": 459804,
+        "ingest_run_id": 1
+      }
+    },
+    "customers": {
+      "file": "crm_50000_customers_dirty_v3.csv",
+      "role": "Entity",
+      "rows": 50000,
+      "columns": 14,
+      "column_names": [
+        "customer_id",
+        "first_name",
+        "last_name",
+        "email",
+        "phone_number",
+        "gender",
+        "dob",
+        "signup_date",
+        "address",
+        "city",
+        "state",
+        "country",
+        "device_id(s)",
+        "source"
+      ],
+      "size_mb": 10.62,
+      "declared_primary_key": "customer_id",
+      "candidate_primary_keys": [],
+      "duplicate_primary_key_rows": 1800,
+      "constant_columns": [],
+      "null_counts": {
+        "customer_id": 0,
+        "first_name": 0,
+        "last_name": 0,
+        "email": 1040,
+        "phone_number": 0,
+        "gender": 0,
+        "dob": 0,
+        "signup_date": 0,
+        "address": 0,
+        "city": 0,
+        "state": 0,
+        "country": 0,
+        "device_id(s)": 0,
+        "source": 0
+      },
+      "distinct_counts": {
+        "customer_id": 48200,
+        "first_name": 5429,
+        "last_name": 7228,
+        "email": 46363,
+        "phone_number": 46777,
+        "gender": 3,
+        "dob": 17733,
+        "signup_date": 4383,
+        "address": 48200,
+        "city": 24534,
+        "state": 50,
+        "country": 243,
+        "device_id(s)": 48200,
+        "source": 3
+      }
+    },
+    "orders": {
+      "file": "orders_300k_dirty.csv",
+      "role": "Event",
+      "rows": 300000,
+      "columns": 8,
+      "column_names": [
+        "order_id",
+        "customer_id",
+        "product_id",
+        "order_amount",
+        "order_date",
+        "payment_method",
+        "status",
+        "quantity"
+      ],
+      "size_mb": 34.06,
+      "declared_primary_key": "order_id",
+      "candidate_primary_keys": [
+        "order_id"
+      ],
+      "duplicate_primary_key_rows": 0,
+      "constant_columns": [],
+      "null_counts": {
+        "order_id": 0,
+        "customer_id": 0,
+        "product_id": 0,
+        "order_amount": 12830,
+        "order_date": 17914,
+        "payment_method": 0,
+        "status": 0,
+        "quantity": 0
+      },
+      "distinct_counts": {
+        "order_id": 300000,
+        "customer_id": 48077,
+        "product_id": 500,
+        "order_amount": 244090,
+        "order_date": 18707,
+        "payment_method": 11,
+        "status": 10,
+        "quantity": 10
+      }
+    },
+    "products": {
+      "file": "product_catalog_dirty_30pct.csv",
+      "role": "Entity",
+      "rows": 500,
+      "columns": 4,
+      "column_names": [
+        "product_id",
+        "product_name",
+        "category",
+        "price"
+      ],
+      "size_mb": 0.02,
+      "declared_primary_key": "product_id",
+      "candidate_primary_keys": [
+        "product_id",
+        "product_name"
+      ],
+      "duplicate_primary_key_rows": 0,
+      "constant_columns": [],
+      "null_counts": {
+        "product_id": 0,
+        "product_name": 0,
+        "category": 30,
+        "price": 26
+      },
+      "distinct_counts": {
+        "product_id": 500,
+        "product_name": 500,
+        "category": 46,
+        "price": 402
+      }
+    },
+    "support": {
+      "file": "support_tickets_30000_dirty.csv",
+      "role": "Event",
+      "rows": 30000,
+      "columns": 8,
+      "column_names": [
+        "ticket_id",
+        "customer_id",
+        "issue_type",
+        "ticket_created",
+        "ticket_resolved",
+        "resolution_time_hours",
+        "sentiment",
+        "support_agent"
+      ],
+      "size_mb": 4.17,
+      "declared_primary_key": "ticket_id",
+      "candidate_primary_keys": [
+        "ticket_id"
+      ],
+      "duplicate_primary_key_rows": 0,
+      "constant_columns": [],
+      "null_counts": {
+        "ticket_id": 0,
+        "customer_id": 0,
+        "issue_type": 0,
+        "ticket_created": 1789,
+        "ticket_resolved": 1823,
+        "resolution_time_hours": 0,
+        "sentiment": 0,
+        "support_agent": 0
+      },
+      "distinct_counts": {
+        "ticket_id": 30000,
+        "customer_id": 22149,
+        "issue_type": 35,
+        "ticket_created": 22820,
+        "ticket_resolved": 22856,
+        "resolution_time_hours": 240,
+        "sentiment": 18,
+        "support_agent": 1556
+      }
+    }
+  },
+  "integrity": {
+    "foreign_keys": {
+      "orders.customer_id -> customers.customer_id": {
+        "rows_checked": 300000,
+        "orphans": 0,
+        "resolved": true
+      },
+      "orders.product_id -> products.product_id": {
+        "rows_checked": 300000,
+        "orphans": 0,
+        "resolved": true
+      },
+      "support.customer_id -> customers.customer_id": {
+        "rows_checked": 30000,
+        "orphans": 0,
+        "resolved": true
+      },
+      "clickstream.customer_id(non-null) -> customers.customer_id": {
+        "rows_checked": 349447,
+        "orphans": 0,
+        "resolved": true
+      }
+    },
+    "crm_duplicate_customer_ids": 1734,
+    "crm_duplicate_rows_to_remove": 1800,
+    "crm_max_rows_per_customer": 4,
+    "crm_partition_key_conflicts_across_duplicates": 0,
+    "clickstream_anonymous_rows": 150553
+  },
+  "eligibility": {
+    "condition_1_three_related_files": {
+      "met": true,
+      "qualifying_files": [
+        "clickstream",
+        "customers",
+        "orders",
+        "products",
+        "support"
+      ]
+    },
+    "condition_2_one_to_many": {
+      "met": true,
+      "associations": [
+        {
+          "parent": "customers",
+          "child": "orders",
+          "key": "customer_id",
+          "children_min": 1,
+          "children_median": 6,
+          "children_max": 30
+        },
+        {
+          "parent": "customers",
+          "child": "clickstream",
+          "key": "customer_id",
+          "children_min": 1,
+          "children_median": 7,
+          "children_max": 31
+        },
+        {
+          "parent": "customers",
+          "child": "support",
+          "key": "customer_id",
+          "children_min": 1,
+          "children_median": 1,
+          "children_max": 6
+        },
+        {
+          "parent": "products",
+          "child": "orders",
+          "key": "product_id",
+          "children_min": 515,
+          "children_median": 599,
+          "children_max": 677
+        }
+      ]
+    },
+    "condition_3_timestamp": {
+      "met": true,
+      "candidates": {
+        "orders.order_date": {
+          "parse_rate": 0.8799,
+          "valid_rows": 263976,
+          "min": "2023-12-03 00:00:00+00:00",
+          "max": "2027-01-06 15:18:03.141475+00:00"
+        },
+        "clickstream.timestamp": {
+          "parse_rate": 0.9197,
+          "valid_rows": 459829,
+          "min": "2025-09-02 16:05:22.021519+00:00",
+          "max": "2028-02-10 16:04:56.123080+00:00"
+        },
+        "support.ticket_created": {
+          "parse_rate": 0.7607,
+          "valid_rows": 22821,
+          "min": "2023-12-03 16:24:10+00:00",
+          "max": "2027-01-06 15:41:44.605743+00:00"
+        }
+      }
+    },
+    "condition_4_volume": {
+      "met": true,
+      "event_rows": 830000
+    }
+  }
+}

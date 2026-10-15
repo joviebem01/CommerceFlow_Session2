@@ -1,0 +1,13 @@
+group,partition,end_offset,committed,lag
+revenue-projector,0,84324,84324,0
+revenue-projector,1,84455,84455,0
+revenue-projector,2,76705,76705,0
+revenue-projector,3,54516,54516,0
+audit-writer,0,84324,84324,0
+audit-writer,1,84455,84455,0
+audit-writer,2,76705,76705,0
+audit-writer,3,54516,54516,0
+high-value-alerter,0,84324,84324,0
+high-value-alerter,1,84455,84455,0
+high-value-alerter,2,76705,76705,0
+high-value-alerter,3,54516,54516,0

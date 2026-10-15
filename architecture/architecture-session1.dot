@@ -1,0 +1,83 @@
+
+digraph Architecture {
+  rankdir=LR;
+  bgcolor="white";
+  compound=true;
+  nodesep=0.42;
+  ranksep=0.9;
+  fontname="Helvetica";
+  labelloc="t";
+  fontsize=17;
+  label=<<b>CommerceFlow — Session 1 In-Memory Parallel Compute Architecture</b><br/>
+         <font point-size="11">CRM + clickstream + product + order + support analytics</font><br/>>;
+
+  node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=10 penwidth=1.3 margin="0.14,0.09"];
+  edge [color="#2E74B5" penwidth=1.4 fontname="Helvetica" fontsize=9];
+
+  subgraph cluster_source {
+    label=<<b>Source CSVs</b>>;
+    color="#767171";
+    style=dashed;
+
+    click [label="clickstream_500k_events.csv\n500,000 events" fillcolor="#D9EAF7"];
+    support [label="support_tickets_30000_dirty.csv\n30,000 tickets" fillcolor="#D9EAF7"];
+    orders [label="orders_300k_dirty.csv\n300,000 order events" fillcolor="#D9EAF7"];
+    crm [label="crm_50000_customers_dirty_v3.csv\n50,000 CRM rows" fillcolor="#D9EAF7"];
+    product [label="product_catalog_dirty_30pct.csv\n500 products" fillcolor="#D9EAF7"];
+  }
+
+  subgraph cluster_integrate {
+    label=<<b>Profiling + Integration</b>>;
+    color="#767171";
+    style=dashed;
+
+    reduce [label="customer-level feature reduction\nclickstream + support" fillcolor="#FFF2CC" color="#C55A11"];
+    profile [label="profile_files.py\neligibility + integrity + quality" fillcolor="#FFF2CC" color="#C55A11"];
+    join [label="load_and_join.py\norder-grain working dataset\n300,000 → 300,000" fillcolor="#FFF2CC" color="#C55A11"];
+  }
+
+  subgraph cluster_compute {
+    label=<<b>Parallel Compute</b>>;
+    color="#767171";
+    style=dashed;
+
+    repart [label="repartition(4, 'state')\nbounded parallelism" fillcolor="#E2EFDA" color="#548235"];
+    agg [label="parallel_compute.py\ngroupBy(state)\norders · successful orders · revenue · AOV" fillcolor="#E2EFDA" color="#548235"];
+    base [label="sequential_baseline.py\npandas reference" fillcolor="#FCE4D6" color="#C55A11"];
+    valid [label="validate()\ncounts exact · floats < 1e-06" fillcolor="#FCE4D6" color="#C55A11"];
+  }
+
+  subgraph cluster_results {
+    label=<<b>Results</b>>;
+    color="#767171";
+    style=dashed;
+
+    parts [label="partition_sizes.csv" fillcolor="white"];
+    parquet [label="state_revenue.parquet" fillcolor="#D9EAF7" color="#1F3864" penwidth=2.1];
+    bench [label="session1_benchmark.csv" fillcolor="white"];
+  }
+
+  click -> reduce;
+  support -> reduce;
+  click -> profile [style=dotted];
+  support -> profile [style=dotted];
+  orders -> profile;
+  crm -> profile;
+  product -> profile;
+
+  reduce -> join;
+  profile -> join [label="eligible"];
+  orders -> join [style=dotted];
+  crm -> join [style=dotted];
+  product -> join [style=dotted];
+
+  join -> repart;
+  join -> base [label="same logical data"];
+  repart -> agg;
+  agg -> valid;
+  base -> valid [label="reference"];
+  valid -> parquet [label="passed" color="#548235" penwidth=2.0];
+
+  repart -> parts [style=dotted];
+  agg -> bench [style=dotted];
+}

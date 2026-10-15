@@ -1,0 +1,75 @@
+
+digraph Session2EntityModel {
+  rankdir=TB;
+  bgcolor="white";
+  splines=polyline;
+  nodesep=0.9;
+  ranksep=1.1;
+  fontname="Helvetica";
+  fontsize=18;
+  label=<<b>CommerceFlow — Session 2 Entity Model</b><br/><font point-size="11">Durable event log with partitioned consumers</font><br/>>;
+
+  node [shape=plaintext fontname="Helvetica"];
+  edge [color="#2E74B5" fontname="Helvetica" fontsize=10 penwidth=1.6 arrowhead=none];
+
+  EventLog [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="6">
+    <tr><td bgcolor="#D9EAF7"><b>session2_events</b><br/><font point-size="9">Durable log table</font></td></tr>
+    <tr><td align="left"><b>partition_id : int</b></td></tr>
+    <tr><td align="left"><b>event_offset : bigint</b></td></tr>
+    <tr><td align="left"><b>event_id : text</b></td></tr>
+    <tr><td align="left">customer_id : text</td></tr>
+    <tr><td align="left">product_id : text</td></tr>
+    <tr><td align="left">region : text</td></tr>
+    <tr><td align="left">order_amount : text</td></tr>
+    <tr><td align="left">order_date : text</td></tr>
+    <tr><td align="left">payment_method : text</td></tr>
+    <tr><td align="left">status : text</td></tr>
+    <tr><td align="left">quantity : text</td></tr>
+    <tr><td align="left">revenue : double precision</td></tr>
+  </table>>];
+
+  ConsumerOffsets [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="6">
+    <tr><td bgcolor="#FFF2CC"><b>session2_offsets</b><br/><font point-size="9">Consumer checkpoints</font></td></tr>
+    <tr><td align="left"><b>group_name : text</b></td></tr>
+    <tr><td align="left"><b>partition_id : int</b></td></tr>
+    <tr><td align="left"><b>next_offset : bigint</b></td></tr>
+  </table>>];
+
+  AuditTable [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="6">
+    <tr><td bgcolor="#E2EFDA"><b>session2_audit</b><br/><font point-size="9">Derived side effects</font></td></tr>
+    <tr><td align="left"><b>audit_id : bigserial</b></td></tr>
+    <tr><td align="left">event_id : text</td></tr>
+    <tr><td align="left">region : text</td></tr>
+    <tr><td align="left">revenue : double precision</td></tr>
+    <tr><td align="left">recorded_at : timestamptz</td></tr>
+  </table>>];
+
+  AlertTable [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="6">
+    <tr><td bgcolor="#F4CCCC"><b>session2_alerts</b><br/><font point-size="9">High-value anomaly table</font></td></tr>
+    <tr><td align="left"><b>event_id : text</b></td></tr>
+    <tr><td align="left">region : text</td></tr>
+    <tr><td align="left">revenue : double precision</td></tr>
+  </table>>];
+
+  Producer [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="6">
+    <tr><td bgcolor="#D9EAF7"><b>Producer</b><br/><font point-size="9">CSV → durable log</font></td></tr>
+    <tr><td align="left">orders_300k_dirty.csv</td></tr>
+    <tr><td align="left">crm_50000_customers_dirty_v3.csv</td></tr>
+  </table>>];
+
+  ConsumerGroup [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="6">
+    <tr><td bgcolor="#FFF2CC"><b>Consumer Group</b><br/><font point-size="9">revenue-projector / audit-writer / high-value-alerter</font></td></tr>
+    <tr><td align="left">reads durable log</td></tr>
+    <tr><td align="left">tracks committed offsets</td></tr>
+    <tr><td align="left">writes side effects</td></tr>
+  </table>>];
+
+  Producer -> EventLog [label="ingests 300k order events" labeldistance=2.4];
+  EventLog -> ConsumerGroup [label="streams ordered records" labeldistance=2.4];
+  ConsumerGroup -> ConsumerOffsets [label="updates next_offset" labeldistance=2.4];
+  ConsumerGroup -> AuditTable [label="writes audit rows" labeldistance=2.4];
+  ConsumerGroup -> AlertTable [label="emits alerts when revenue > 900" labeldistance=2.4];
+
+  note [shape=note style=filled fillcolor="#FFF9E6" color="#C55A11" fontsize=10 label=<<b>Key partitioning rule</b><br align="left"/>Customer state determines a stable partition<br align="left"/>4 logical partitions are used<br align="left"/>Replay reads the log without mutating offsets>];
+  EventLog -> note [style=invis];
+}

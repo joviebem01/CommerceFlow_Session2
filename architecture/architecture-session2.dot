@@ -1,0 +1,94 @@
+
+digraph Session2Architecture {
+  rankdir=LR;
+  bgcolor="white";
+  compound=true;
+  nodesep=0.48;
+  ranksep=0.95;
+  fontname="Helvetica";
+  fontsize=17;
+  label=<<b>CommerceFlow — Session 2 Event Streaming Architecture</b><br/><font point-size="11">PostgreSQL durable log + partitioned consumers + reconciliation</font><br/>>;
+
+  node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=10 penwidth=1.3 margin="0.16,0.10"];
+  edge [color="#2E74B5" penwidth=1.5 fontname="Helvetica" fontsize=9];
+
+  subgraph cluster_sources {
+    label=<<b>Source data</b>>;
+    color="#767171";
+    style=dashed;
+    crm [label="crm_50000_customers_dirty_v3.csv
+customer state lookup" fillcolor="#D9EAF7"];
+    orders [label="orders_300k_dirty.csv
+raw order events" fillcolor="#D9EAF7"];
+  }
+
+  subgraph cluster_ingest {
+    label=<<b>Ingestion / durable log</b>>;
+    color="#767171";
+    style=dashed;
+    produce [label="produce()
+truncate + reload
+session2_events" fillcolor="#FFF2CC" color="#C55A11"];
+    log [label="PostgreSQL
+session2_events
+4 partitions by customer state" fillcolor="#D9EAF7" color="#1F3864" penwidth=2.1];
+    offsets [label="session2_offsets
+per-group committed offsets" fillcolor="#FFF2CC" color="#C55A11"];
+  }
+
+  subgraph cluster_consumers {
+    label=<<b>Consumer layer</b>>;
+    color="#767171";
+    style=dashed;
+    rev [label="revenue-projector
+rebuild regional revenue" fillcolor="#E2EFDA" color="#548235"];
+    audit [label="audit-writer
+append audit rows" fillcolor="#E2EFDA" color="#548235"];
+    alert [label="high-value-alerter
+alert on revenue > 900" fillcolor="#E2EFDA" color="#548235"];
+  }
+
+  subgraph cluster_support {
+    label=<<b>Operational services</b>>;
+    color="#767171";
+    style=dashed;
+    reconcile [label="reconcile()
+compare against CSV batch baseline" fillcolor="#F4CCCC" color="#A85454"];
+    replay [label="run_replay()
+read event history without offset mutation" fillcolor="#F4CCCC" color="#A85454"];
+    kafka [label="kafka_publish()
+optional Kafka topic
+transaction.recorded" fillcolor="#F4CCCC" color="#A85454"];
+  }
+
+  subgraph cluster_results {
+    label=<<b>Output artifacts</b>>;
+    color="#767171";
+    style=dashed;
+    lag [label="consumer_lag.csv" fillcolor="white"];
+    revenue [label="streamed_regional_revenue.csv" fillcolor="white"];
+    recon [label="reconciliation_report.json" fillcolor="white"];
+    replay_csv [label="replay_revenue.csv" fillcolor="white"];
+  }
+
+  crm -> produce;
+  orders -> produce;
+  produce -> log;
+  log -> rev;
+  log -> audit;
+  log -> alert;
+  rev -> offsets;
+  audit -> offsets;
+  alert -> offsets;
+
+  rev -> revenue;
+  audit -> lag;
+  alert -> lag;
+  log -> reconcile;
+  reconcile -> recon;
+  log -> replay;
+  replay -> replay_csv;
+  log -> kafka;
+  kafka -> "Kafka broker
+transaction.recorded" [style=dotted];
+}

@@ -1,0 +1,149 @@
+{
+  "chosen_key": "state",
+  "owned_by": "CRM customer",
+  "prediction": {
+    "distinct": 50,
+    "min": 5547,
+    "median": 5981,
+    "max": 6348,
+    "skew_ratio": 1.1444
+  },
+  "all_candidates": [
+    {
+      "column": "state",
+      "source": "CRM customer",
+      "distinct": 50,
+      "min": 5547,
+      "median": 5981,
+      "max": 6348,
+      "skew_ratio": 1.1444,
+      "viable": true,
+      "rejected_because": ""
+    },
+    {
+      "column": "source",
+      "source": "CRM customer",
+      "distinct": 3,
+      "min": 99722,
+      "median": 99725,
+      "max": 100553,
+      "skew_ratio": 1.0083,
+      "viable": true,
+      "rejected_because": ""
+    },
+    {
+      "column": "country",
+      "source": "CRM customer",
+      "distinct": 243,
+      "min": 981,
+      "median": 1220,
+      "max": 2471,
+      "skew_ratio": 2.5189,
+      "viable": true,
+      "rejected_because": ""
+    },
+    {
+      "column": "city",
+      "source": "CRM customer",
+      "distinct": 24492,
+      "min": 1,
+      "median": 8,
+      "max": 287,
+      "skew_ratio": 287.0,
+      "viable": true,
+      "rejected_because": ""
+    },
+    {
+      "column": "category_normalized",
+      "source": "product catalog",
+      "distinct": 31,
+      "min": 566,
+      "median": 1808,
+      "max": 36222,
+      "skew_ratio": 63.9965,
+      "viable": false,
+      "rejected_because": "18,235 null values"
+    },
+    {
+      "column": "payment_method",
+      "source": "orders",
+      "distinct": 11,
+      "min": 10586,
+      "median": 10822,
+      "max": 56446,
+      "skew_ratio": 5.3321,
+      "viable": true,
+      "rejected_because": ""
+    },
+    {
+      "column": "status_normalized",
+      "source": "orders (cleaned)",
+      "distinct": 3,
+      "min": 35893,
+      "median": 42827,
+      "max": 221280,
+      "skew_ratio": 6.165,
+      "viable": true,
+      "rejected_because": ""
+    },
+    {
+      "column": "quantity",
+      "source": "orders",
+      "distinct": 10,
+      "min": 14878,
+      "median": 29872,
+      "max": 45296,
+      "skew_ratio": 3.0445,
+      "viable": true,
+      "rejected_because": ""
+    },
+    {
+      "column": "customer_id",
+      "source": "orders/CRM/clickstream/support",
+      "distinct": 48077,
+      "min": 1,
+      "median": 6,
+      "max": 30,
+      "skew_ratio": 30.0,
+      "viable": false,
+      "rejected_because": "identifier, not a business grouping attribute"
+    },
+    {
+      "column": "product_id",
+      "source": "orders/product catalog",
+      "distinct": 500,
+      "min": 515,
+      "median": 599,
+      "max": 677,
+      "skew_ratio": 1.3146,
+      "viable": false,
+      "rejected_because": "identifier, not a business grouping attribute"
+    }
+  ],
+  "workload": "Compute order_count, successful_orders, revenue_total, and AOV per state across the 300,000-row order-grain working dataset.",
+  "output_schema": {
+    "state": "string",
+    "order_count": "int64",
+    "successful_orders": "int64",
+    "revenue_total": "double",
+    "aov": "double"
+  },
+  "join": {
+    "rows_before": 300000,
+    "rows_after": 300000,
+    "delta": 0,
+    "columns_after": 31,
+    "join_seconds": 2.0112,
+    "join_path": "orders |> canonical CRM |> product |> customer-level clickstream features |> customer-level support features",
+    "customer_canonicalization": {
+      "raw_rows": 50000,
+      "canonical_rows": 48200,
+      "duplicate_rows_removed": 1800,
+      "duplicate_customer_ids": 1734
+    },
+    "clickstream_feature_rows": 48159,
+    "support_feature_rows": 22149,
+    "missing_state_after_join": 0,
+    "missing_product_after_join": 0
+  }
+}

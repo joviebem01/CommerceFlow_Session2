@@ -1,0 +1,81 @@
+
+digraph UML {
+  rankdir=TB;
+  bgcolor="white";
+  splines=ortho;
+  nodesep=0.75;
+  ranksep=0.9;
+  fontname="Helvetica";
+  labelloc="t";
+  fontsize=17;
+  label=<<b>UML Class Diagram — E-Commerce Multi-File Dataset</b>>;
+
+  node [shape=plaintext fontname="Helvetica"];
+  edge [color="#666666" fontname="Helvetica" fontsize=10 arrowhead=none];
+
+  Product [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#E2EFDA"><b>Product</b></td></tr>
+      <tr><td align="left"><b>PK</b> product_id</td></tr>
+      <tr><td align="left">product_name</td></tr>
+      <tr><td align="left">category</td></tr>
+      <tr><td align="left">price</td></tr>
+    </table>
+  >];
+
+  Customer [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#D9EAF7"><b>Customer</b></td></tr>
+      <tr><td align="left"><b>PK?</b> customer_id (dirty duplicates)</td></tr>
+      <tr><td align="left">first_name, last_name</td></tr>
+      <tr><td align="left">email, phone_number</td></tr>
+      <tr><td align="left">gender, dob, signup_date</td></tr>
+      <tr><td align="left">address, city, state, country</td></tr>
+      <tr><td align="left">device_id(s), source</td></tr>
+    </table>
+  >];
+
+  Order [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#FFF2CC"><b>Order</b></td></tr>
+      <tr><td align="left"><b>PK</b> order_id</td></tr>
+      <tr><td align="left"><b>FK</b> customer_id</td></tr>
+      <tr><td align="left"><b>FK</b> product_id</td></tr>
+      <tr><td align="left">order_amount</td></tr>
+      <tr><td align="left">order_date</td></tr>
+      <tr><td align="left">payment_method</td></tr>
+      <tr><td align="left">status, quantity</td></tr>
+    </table>
+  >];
+
+  Clickstream [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#F4DDF4"><b>ClickstreamEvent</b></td></tr>
+      <tr><td align="left"><b>PK</b> event_id</td></tr>
+      <tr><td align="left">session_id</td></tr>
+      <tr><td align="left"><b>FK?</b> customer_id (nullable)</td></tr>
+      <tr><td align="left">event_type, page_url</td></tr>
+      <tr><td align="left">device_id, timestamp, ingest_run_id</td></tr>
+    </table>
+  >];
+
+  Support [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5">
+      <tr><td bgcolor="#F4CCCC"><b>SupportTicket</b></td></tr>
+      <tr><td align="left"><b>PK</b> ticket_id</td></tr>
+      <tr><td align="left"><b>FK</b> customer_id</td></tr>
+      <tr><td align="left">issue_type</td></tr>
+      <tr><td align="left">ticket_created, ticket_resolved</td></tr>
+      <tr><td align="left">resolution_time_hours</td></tr>
+      <tr><td align="left">sentiment, support_agent</td></tr>
+    </table>
+  >];
+
+  Product -> Order [label="1        0..*"];
+  Customer -> Order [label="1        0..*"];
+  Customer -> Clickstream [label="0..1        0..*"];
+  Customer -> Support [label="1        0..*"];
+
+  note [shape=note style=filled fillcolor="#F2F2F2" label="Relationship checks from the CSVs:\l• all order customer_ids resolve to CRM\l• all support customer_ids resolve to CRM\l• all non-null clickstream customer_ids resolve to CRM\l• all order product_ids resolve to Product\l• CRM customer_id has duplicate raw rows\l"];
+  Order -> note [style=dashed];
+}
